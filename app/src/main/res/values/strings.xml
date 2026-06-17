@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Budget Survival</string>
+    <string name="expense_medium_cash">💵 Cash</string>
+    <string name="expense_medium_card">💳 Card</string>
+</resources>
