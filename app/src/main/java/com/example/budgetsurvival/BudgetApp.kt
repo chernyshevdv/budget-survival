@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import java.time.LocalDate
 import java.util.UUID
 
 @Composable
@@ -50,7 +51,10 @@ fun BudgetApp(){
     val mutatePlannedToActual: (UUID) -> Unit = { id ->
         expenses = expenses.map {
             if (it.id == id)
-                it.copy(status = ExpenseStatus.ACTUAL)
+                it.copy(
+                    status = ExpenseStatus.ACTUAL,
+                    date = LocalDate.now()
+                )
             else
                 it
         }
@@ -87,8 +91,14 @@ fun BudgetApp(){
             route = Screen.EditExpense.route,
             arguments = listOf(navArgument("expenseId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val expenseId = UUID.fromString(
-                backStackEntry.arguments?.getString("expenseId"))  ?: return@composable
+            val expenseIdString = backStackEntry.arguments
+                ?.getString("expenseId") ?: return@composable
+
+            val expenseId = try {
+                UUID.fromString(expenseIdString)
+            }catch (e: IllegalArgumentException) {
+                return@composable
+            }
             val expense = expenses.firstOrNull{ it.id == expenseId } ?: return@composable
 
             ExpenseFormScreen(
