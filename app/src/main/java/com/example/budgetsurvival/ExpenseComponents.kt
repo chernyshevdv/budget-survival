@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 
 @Composable
@@ -99,10 +100,10 @@ fun ExpenseRow(
 @Composable
 fun ExpenseList(
     modifier: Modifier = Modifier,
-    expenses: List<IndexedValue<Expense>>,
-    onEdit: (Int) -> Unit,
-    onDelete: (Int) -> Unit,
-    onMarkActual: (Int) -> Unit
+    expenses: List<Expense>,
+    onEdit: (UUID) -> Unit,
+    onDelete: (UUID) -> Unit,
+    onMarkActual: (UUID) -> Unit
 ){
     Text("Расходы", style=MaterialTheme.typography.titleLarge)
     LazyColumn(
@@ -111,15 +112,15 @@ fun ExpenseList(
     ) {
         items(expenses) { item ->
             ExpenseRow(
-                expense = item.value,
+                expense = item,
                 onClick = {
-                    onEdit(item.index)
+                    onEdit(item.id)
                 },
                 onLongClick = {
-                    if (item.value.status == ExpenseStatus.PLANNED)
-                        onMarkActual(item.index)
+                    if (item.status == ExpenseStatus.PLANNED)
+                        onMarkActual(item.id)
                 },
-                onDelete = { onDelete(item.index) }
+                onDelete = { onDelete(item.id) }
             )
         }
     }

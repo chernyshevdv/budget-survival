@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import java.util.UUID
 
 @Composable
 fun BudgetApp(){
@@ -29,26 +30,29 @@ fun BudgetApp(){
         saveExpenses(context,expenses)
     }
 
-    val updateExpense: (index: Int, updatedExpense: Expense) -> Unit = { index, expense ->
-        expenses = expenses.toMutableList().also {
-            it[index] = expense
+    val updateExpense: (Expense) -> Unit = { updatedExpense ->
+        expenses = expenses.map {
+            if (it.id == updatedExpense.id)
+                updatedExpense
+            else
+                it
         }
         saveExpenses(context, expenses)
     }
 
-    val deleteExpense: (index: Int) -> Unit = { index ->
-        expenses = expenses.toMutableList().also {
-            it.removeAt(index)
+    val deleteExpense: (UUID) -> Unit = { id ->
+        expenses = expenses.filter {
+            it.id != id
         }
         saveExpenses(context, expenses)
     }
 
-    val mutatePlannedToActual: (index: Int) -> Unit = {index ->
-        expenses = expenses.toMutableList().also {
-            val expense = it[index].copy(
-                status = ExpenseStatus.ACTUAL
-            )
-            it[index] = expense
+    val mutatePlannedToActual: (UUID) -> Unit = { id ->
+        expenses = expenses.map {
+            if (it.id == id)
+                it.copy(status = ExpenseStatus.ACTUAL)
+            else
+                it
         }
         saveExpenses(context, expenses)
     }
@@ -81,10 +85,11 @@ fun BudgetApp(){
         }
         composable(
             route = Screen.EditExpense.route,
-            arguments = listOf(navArgument("index") { type = NavType.IntType })
+            arguments = listOf(navArgument("expenseId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val index = backStackEntry.arguments?.getInt("index") ?: return@composable
-            val expense = expenses.getOrNull(index) ?: return@composable
+            val expenseId = UUID.fromString(
+                backStackEntry.arguments?.getString("expenseId"))  ?: return@composable
+            val expense = expenses.firstOrNull{ it.id == expenseId } ?: return@composable
 
             ExpenseFormScreen(
                 expense = expense,
@@ -92,7 +97,7 @@ fun BudgetApp(){
                     navController.popBackStack()
                 },
                 onSave = { updatedExpense ->
-                    updateExpense(index, updatedExpense)
+                    updateExpense(updatedExpense)
                     navController.popBackStack()
                 }
             )
