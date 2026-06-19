@@ -1,4 +1,4 @@
-package com.example.budgetsurvival
+package dev.chernyshev.budgetsurvival
 
 import android.content.Context
 import org.json.JSONArray

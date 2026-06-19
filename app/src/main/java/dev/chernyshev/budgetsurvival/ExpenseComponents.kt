@@ -1,4 +1,4 @@
-package com.example.budgetsurvival
+package dev.chernyshev.budgetsurvival
 
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement

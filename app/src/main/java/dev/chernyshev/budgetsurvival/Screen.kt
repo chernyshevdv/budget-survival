@@ -1,4 +1,4 @@
-package com.example.budgetsurvival
+package dev.chernyshev.budgetsurvival
 
 sealed class Screen(val route: String) {
     data object Budget: Screen("budget")

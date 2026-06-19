@@ -1,4 +1,4 @@
-package com.example.budgetsurvival
+package dev.chernyshev.budgetsurvival
 
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
