@@ -120,7 +120,13 @@ fun ExpenseFormScreen(
             Button(
                 onClick = {
                     buildExpense(
-                        title, amountText, dateText, isPlanned, isCash, isObligation
+                        existingExpense = expense,
+                        title=title,
+                        amountText=amountText,
+                        dateText= dateText,
+                        isPlanned=isPlanned,
+                        isCash = isCash,
+                        isObligation=isObligation
                     )?.let(onSave)
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -132,6 +138,7 @@ fun ExpenseFormScreen(
 }
 
 private fun buildExpense(
+    existingExpense: Expense?,
     title: String,
     amountText: String,
     dateText: String,
@@ -139,6 +146,7 @@ private fun buildExpense(
     isCash: Boolean,
     isObligation: Boolean
 ): Expense? {
+    // Builds expense with the same id, if it exists
     val amount = amountText.toIntOrNull()
     val date = try {
         LocalDate.parse(dateText)
@@ -146,20 +154,33 @@ private fun buildExpense(
         null
     }
     if (
-        title.isNotBlank() &&
-        amount != null &&
-        amount > 0 &&
-        date != null
-    ) {
-        val status = if (isPlanned) ExpenseStatus.PLANNED
-        else ExpenseStatus.ACTUAL
-        val medium = if (isCash) ExpenseMedium.CASH
-        else ExpenseMedium.CARD
-        val scale = if (isObligation) BudgetBucket.OBLIGATION
-        else BudgetBucket.DAILY
+        title.isBlank() ||
+        amount == null ||
+        amount <= 0 ||
+        date == null
+    ) return null
 
-        return Expense(title.trim(), date, amount, status, medium, scale)
-    } else {
-        return null
-    }
+    val status = if (isPlanned) ExpenseStatus.PLANNED
+    else ExpenseStatus.ACTUAL
+    val medium = if (isCash) ExpenseMedium.CASH
+    else ExpenseMedium.CARD
+    val scale = if (isObligation) BudgetBucket.OBLIGATION
+    else BudgetBucket.DAILY
+
+    return existingExpense?.copy(
+        // leave id from the existingExpense
+        title=title.trim(),
+        date = date,
+        amount = amount,
+        status = status,
+        medium = medium,
+        scale = scale
+    ) ?: Expense(
+        title=title.trim(),
+        date = date,
+        amount = amount,
+        status = status,
+        medium = medium,
+        scale = scale)
+
 }

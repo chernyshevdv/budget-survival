@@ -1,6 +1,7 @@
 package dev.chernyshev.budgetsurvival
 
 import java.time.LocalDate
+import java.util.UUID
 
 
 enum class ExpenseStatus {
@@ -18,6 +19,7 @@ enum class BudgetBucket {
     OBLIGATION
 }
 data class Expense (
+    val id: UUID = UUID.randomUUID(),
     val title: String,
     val date: LocalDate,
     val amount: Int,

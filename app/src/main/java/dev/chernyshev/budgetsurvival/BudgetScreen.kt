@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,9 +28,9 @@ fun BudgetScreen(
     settings: BudgetSettings,
     onAddExpenseClick: () -> Unit,
     onSettingsClick: () -> Unit,
-    onEditExpenseClick: (Int) -> Unit,
-    onMarkActual: (Int) -> Unit,
-    onDelete: (Int) -> Unit
+    onEditExpenseClick: (UUID) -> Unit,
+    onMarkActual: (UUID) -> Unit,
+    onDelete: (UUID) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -75,10 +76,8 @@ fun BudgetScreen(
             Spacer(modifier = Modifier.height(8.dp))
             ExpenseList(
                 modifier = Modifier.weight(1f),
-                expenses.withIndex().sortedByDescending { it.value.date },
-                onEdit = {index ->
-                    onEditExpenseClick(index)
-                },
+                expenses.sortedByDescending { it.date },
+                onEdit = onEditExpenseClick,
                 onDelete = onDelete,
                 onMarkActual = onMarkActual
             )

@@ -4,6 +4,7 @@ import android.content.Context
 import org.json.JSONArray
 import org.json.JSONObject
 import java.time.LocalDate
+import java.util.UUID
 
 const val expensesFileName = "expenses.json"
 const val settingsFileName = "settings.json"
@@ -18,6 +19,11 @@ fun loadExpenses(context: Context): List<Expense> {
         List(array.length()) { index ->
             val item = array.getJSONObject(index)
             Expense(
+                id = if(item.has("id")) {
+                    UUID.fromString(item.getString("id"))
+                } else {
+                    UUID.randomUUID()
+                },
                 title = item.getString("title"),
                 date = LocalDate.parse(
                     item.optString("date", LocalDate.now().toString())
@@ -37,10 +43,10 @@ fun loadExpenses(context: Context): List<Expense> {
     } catch(e: Exception) {
         listOf(
             Expense(
-                "Телефон",
-                LocalDate.now(),
-                2_500,
-                ExpenseStatus.ACTUAL,
+                title="Телефон",
+                date = LocalDate.now(),
+                amount = 2_500,
+                status = ExpenseStatus.ACTUAL,
                 medium = ExpenseMedium.CARD,
                 scale = BudgetBucket.DAILY
             )
@@ -52,6 +58,7 @@ fun saveExpenses(context: Context, expenses: List<Expense>){
     val array = JSONArray()
     expenses.forEach { expense ->
         val item = JSONObject()
+        item.put("id", expense.id.toString())
         item.put("title", expense.title)
         item.put("date", expense.date.toString())
         item.put("amount", expense.amount)
