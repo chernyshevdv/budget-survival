@@ -1,4 +1,4 @@
-package com.example.budgetsurvival
+package dev.chernyshev.budgetsurvival
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

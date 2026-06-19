@@ -1,4 +1,4 @@
-package com.example.budgetsurvival.ui.theme
+package dev.chernyshev.budgetsurvival.theme
 
 import androidx.compose.ui.graphics.Color
 

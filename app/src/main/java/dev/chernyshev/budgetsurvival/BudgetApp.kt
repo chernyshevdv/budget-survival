@@ -1,10 +1,11 @@
-package com.example.budgetsurvival
+package dev.chernyshev.budgetsurvival
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,7 +16,7 @@ import java.util.UUID
 
 @Composable
 fun BudgetApp(){
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
 
     var settings by remember {
         mutableStateOf(loadSettings(context))
