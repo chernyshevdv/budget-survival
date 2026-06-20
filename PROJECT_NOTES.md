@@ -175,10 +175,10 @@ Navigation is implemented using Navigation Compose.
 
 ## Next
 
-- [ ] 1. Expense ID instead of list index
-- [ ] 2. DatePicker
-- [ ] 3. Amount calculator for composite expenses
-- [ ] 4. i18n / string resources cleanup
+- [ ] 1. [Expense ID instead of list index](#1-expense-id-instead-of-list-index)
+- [ ] 2. [DatePicker](#2-datepicker)
+- [ ] 3. [Amount calculator for composite expenses](#3-amount-calculator-for-composite-expenses)
+- [ ] 4. [i18n / string resources cleanup](#4-i18n--string-resources-cleanup)
 
 
 ### 1. Expense ID instead of list index
