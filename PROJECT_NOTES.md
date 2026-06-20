@@ -1,5 +1,7 @@
 # Budget Survival - Project Notes
 
+[Roadmap / Backlog](#roadmap--backlog)
+
 ## Current Status
 
 The application is actively used for personal budget tracking.
@@ -172,6 +174,12 @@ Navigation is implemented using Navigation Compose.
 # Roadmap / Backlog
 
 ## Next
+
+- [ ] 1. Expense ID instead of list index
+- [ ] 2. DatePicker
+- [ ] 3. Amount calculator for composite expenses
+- [ ] 4. i18n / string resources cleanup
+
 
 ### 1. Expense ID instead of list index
 
