@@ -210,6 +210,47 @@ fun Long.toLocalDate(): LocalDate
 
 ---
 
+# Roadmap / Backlog
+
+## Next
+
+* [ ] 1. MoneyField component
+* [ ] 2. Amount calculator for composite expenses
+* [ ] 3. i18n / string resources cleanup
+* [ ] 4. Language and currency settings
+
+### 1. MoneyField component
+
+Introduce a reusable MoneyField component.
+
+Goals:
+
+* Centralize amount entry.
+* Centralize amount validation.
+* Centralize currency display.
+* Provide the future entry point for calculator functionality.
+
+### 2. Amount calculator for composite expenses
+
+When entering an expense amount, the amount field could open or embed a small calculator component.
+
+Possible UX options:
+
+* Calculator icon near the amount field.
+* Bottom sheet calculator.
+* Inline expression input, for example `320 + 450 + 120`.
+* Result is written back into the amount field.
+
+### 3. i18n / string resources cleanup
+
+Move remaining user-facing strings to Android string resources.
+
+Target languages:
+
+* English
+* Russian
+* Serbian
+
 ### 4. Language and currency settings
 
 Extend BudgetSettings.
