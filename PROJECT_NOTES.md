@@ -214,8 +214,8 @@ fun Long.toLocalDate(): LocalDate
 
 ## Next
 
-* [ ] 1. MoneyField component
-* [ ] 2. Amount calculator for composite expenses
+* [x] 1. MoneyField component
+* [x] 2. Amount calculator for composite expenses
 * [ ] 3. i18n / string resources cleanup
 * [ ] 4. Language and currency settings
 
