@@ -6,9 +6,9 @@
 
 Used for:
 
-- Expense
-- BudgetSettings
-- BudgetSummary
+* Expense
+* BudgetSettings
+* BudgetSummary
 
 ### Extension Functions
 
@@ -17,6 +17,8 @@ Examples:
 ```kotlin
 ExpenseMedium.display()
 Int.rsd()
+LocalDate.toEpochMillis()
+Long.toLocalDate()
 ```
 
 ### Nullable Types
@@ -27,8 +29,8 @@ Expense?
 
 Meaning:
 
-- Expense
-- or null
+* Expense
+* or null
 
 ### Safe Calls
 
@@ -58,6 +60,8 @@ Examples:
 (Expense) -> Unit
 
 (String) -> Unit
+
+(LocalDate) -> Unit
 ```
 
 Mental model:
@@ -68,6 +72,8 @@ void func()
 void func(Expense)
 
 void func(String)
+
+void func(LocalDate)
 ```
 
 ### Unit
@@ -118,35 +124,89 @@ First Navigation Compose experience.
 
 Current screens:
 
-- BudgetScreen
-- ExpenseFormScreen
+* BudgetScreen
+* ExpenseFormScreen
+* BudgetSettingsScreen
 
 ### Layout System
 
 Core concepts:
 
-- Row
-- Column
-- Box
-- Spacer
+* Row
+* Column
+* Box
+* Spacer
 
 Important modifiers:
 
-- fillMaxWidth()
-- fillMaxHeight()
-- weight()
-- padding()
-- size()
+* fillMaxWidth()
+* fillMaxHeight()
+* weight()
+* padding()
+* size()
 
 ### Material 3
 
 Implemented:
 
-- TopAppBar
-- FloatingActionButton
-- Material Icons
-- Cards
-- Typography
+* TopAppBar
+* FloatingActionButton
+* Material Icons
+* Cards
+* Typography
+* DatePicker
+* DatePickerDialog
+
+### Reusable Components
+
+First reusable UI component:
+
+```kotlin
+DatePickerField
+```
+
+Used in:
+
+* ExpenseFormScreen
+* BudgetSettingsScreen
+
+Learning:
+
+> Extract a component after the second use case appears.
+
+### DatePicker State
+
+Interesting Compose pattern:
+
+```text
+DatePicker
+    ↓
+DatePickerState
+    ↑
+Callback
+    ↑
+Screen State
+```
+
+The DatePicker owns temporary UI state.
+
+The screen owns business state.
+
+Example:
+
+```kotlin
+DatePickerField(
+    value = date,
+    onValueChange = { date = it }
+)
+```
+
+This is another example of:
+
+```text
+Data down
+Events up
+```
 
 ---
 
@@ -168,6 +228,27 @@ Extracted when button handler became difficult to read.
 
 Introduced when dialogs stopped being sufficient.
 
+### DatePickerField
+
+Extracted when date selection appeared in multiple screens.
+
+---
+
+# Build & Release Learnings
+
+## Release Signing Should Not Block Development
+
+A new machine failed to sync because release signing configuration depended on a private keystore.
+
+Solution:
+
+* Make release signing optional.
+* Keep debug builds independent from release credentials.
+
+Learning:
+
+> Private release infrastructure should not be required for local development.
+
 ---
 
 # Personal Conclusions
@@ -179,6 +260,10 @@ The most important discovery:
 The second most important discovery:
 
 > Architecture should solve existing problems, not hypothetical ones.
+
+The third:
+
+> Reusable components are worth extracting only after duplication appears.
 
 And finally:
 
