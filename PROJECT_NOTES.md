@@ -8,12 +8,20 @@ The application is actively used for personal budget tracking.
 
 Main workflow works:
 
-- Load settings
-- Load expenses
-- Add expense
-- Save expense
-- Budget calculations
-- Navigation between screens
+* Load settings
+* Load expenses
+* Add expense
+* Edit expense
+* Delete expense
+* Save expense
+* Budget calculations
+* Navigation between screens
+
+Recent improvements:
+
+* Stable expense identifiers
+* Reusable DatePicker component
+* Optional release signing for local development
 
 ---
 
@@ -23,27 +31,28 @@ Main workflow works:
 
 Fields:
 
-- title
-- date
-- amount
-- status
-- medium
-- scale
+* id
+* title
+* date
+* amount
+* status
+* medium
+* scale
 
 ### ExpenseStatus
 
-- ACTUAL
-- PLANNED
+* ACTUAL
+* PLANNED
 
 ### ExpenseMedium
 
-- CASH
-- CARD
+* CASH
+* CARD
 
 ### BudgetBucket
 
-- DAILY
-- OBLIGATION
+* DAILY
+* OBLIGATION
 
 Purpose:
 
@@ -55,16 +64,16 @@ Examples:
 
 Daily:
 
-- Food
-- Coffee
-- Transport
+* Food
+* Coffee
+* Transport
 
 Obligation:
 
-- Infostan
-- Yettel
-- Rent
-- Subscriptions
+* Infostan
+* Yettel
+* Rent
+* Subscriptions
 
 ---
 
@@ -74,8 +83,8 @@ Obligation:
 
 Fields:
 
-- initialBudget
-- endDate
+* initialBudget
+* endDate
 
 Stored in:
 
@@ -95,13 +104,13 @@ BudgetSummary.kt
 
 ### Calculated Values
 
-- actualSpent
-- plannedAmount
-- freeAmount
-- daysLeft
-- perDay
-- todaySpent
-- todayRemaining
+* actualSpent
+* plannedAmount
+* freeAmount
+* daysLeft
+* perDay
+* todaySpent
+* todayRemaining
 
 ---
 
@@ -111,27 +120,35 @@ BudgetSummary.kt
 
 Responsibilities:
 
-- Own application state
-- Load/save data
-- Coordinate navigation
-- Open dialogs
+* Own application state
+* Load/save data
+* Coordinate navigation
+* Open screens
 
 ## BudgetScreen
 
 Responsibilities:
 
-- Main budget screen
-- Budget overview
-- Today's overview
-- Expense list
+* Main budget screen
+* Budget overview
+* Today's overview
+* Expense list
 
 ## ExpenseFormScreen
 
 Responsibilities:
 
-- Create expense
-- Validate input
-- Build Expense object
+* Create expense
+* Edit expense
+* Validate input
+* Build Expense object
+
+## BudgetSettingsScreen
+
+Responsibilities:
+
+* Configure budget settings
+* Configure budget end date
 
 ---
 
@@ -145,8 +162,8 @@ Storage.kt
 
 Current files:
 
-- expenses.json
-- settings.json
+* expenses.json
+* settings.json
 
 ---
 
@@ -156,18 +173,40 @@ Current files:
 
 Sections:
 
-- Period
-- Today
-- Expenses
+* Period
+* Today
+* Expenses
 
 ## Navigation
 
 Screens:
 
-- BudgetScreen
-- ExpenseFormScreen
+* BudgetScreen
+* ExpenseFormScreen
+* BudgetSettingsScreen
 
 Navigation is implemented using Navigation Compose.
+
+## Shared Components
+
+### DatePickerField
+
+Reusable Material 3 date picker component.
+
+Used in:
+
+* ExpenseFormScreen
+* BudgetSettingsScreen
+
+### Date Extensions
+
+Reusable helpers:
+
+```kotlin
+fun LocalDate.toEpochMillis(): Long
+
+fun Long.toLocalDate(): LocalDate
+```
 
 ---
 
@@ -175,98 +214,51 @@ Navigation is implemented using Navigation Compose.
 
 ## Next
 
-- [x] 1. [Expense ID instead of list index](#1-expense-id-instead-of-list-index)
-- [x] 2. [DatePicker](#2-datepicker)
-- [ ] 3. [Amount calculator for composite expenses](#3-amount-calculator-for-composite-expenses)
-- [ ] 4. [i18n / string resources cleanup](#4-i18n--string-resources-cleanup)
+* [ ] 1. Amount calculator for composite expenses
+* [ ] 2. i18n / string resources cleanup
 
-
-### 1. Expense ID instead of list index
-
-Current edit/delete/mark-actual flow should move from list indexes to stable expense identifiers.
-
-Target model:
-
-```kotlin
-data class Expense(
-    val id: String,
-    val title: String,
-    val date: LocalDate,
-    val amount: Int,
-    val status: ExpenseStatus,
-    val medium: ExpenseMedium,
-    val scale: BudgetBucket
-)
-```
-
-Target routes and events:
-
-```text
-edit-expense/{expenseId}
-deleteExpense(expenseId)
-updateExpense(updatedExpense)
-markPlannedAsActual(expenseId)
-```
-
-Expected benefit:
-
-- Expense operations no longer depend on visual list order.
-- Future filtering/sorting becomes safer.
-- Navigation arguments become domain-oriented instead of UI-list-oriented.
-
-### 2. DatePicker
-
-Replace manual date text input with a proper date picker.
-
-Expected benefit:
-
-- Better UX.
-- Less invalid input.
-- Good practice with form state and Material components.
-
-### 3. Amount calculator for composite expenses
+### 1. Amount calculator for composite expenses
 
 When entering an expense amount, the amount field could open or embed a small calculator component.
 
 Use case:
 
-- The user bought several things during the day in the same category.
-- Example: two pharmacy visits in one day.
-- Instead of entering two separate expenses, the user wants to enter one expense and calculate the total in-place.
+* The user bought several things during the day in the same category.
+* Example: two pharmacy visits in one day.
+* Instead of entering two separate expenses, the user wants to enter one expense and calculate the total in-place.
 
 Possible UX options:
 
-- Calculator icon near the amount field.
-- Bottom sheet calculator.
-- Inline expression input, for example `320 + 450 + 120`.
-- Result is written back into the amount field.
+* Calculator icon near the amount field.
+* Bottom sheet calculator.
+* Inline expression input, for example `320 + 450 + 120`.
+* Result is written back into the amount field.
 
 Expected benefit:
 
-- Faster entry of composite expenses.
-- Less context switching to an external calculator app.
-- Good practice with reusable UI components and temporary form state.
+* Faster entry of composite expenses.
+* Less context switching to an external calculator app.
+* Good practice with reusable UI components and temporary form state.
 
-### 4. i18n / string resources cleanup
+### 2. i18n / string resources cleanup
 
 Move remaining user-facing strings to Android string resources.
-Prepare three languages.
 
 Target languages:
 
-- English
-- Russian
-- Serbian
+* English
+* Russian
+* Serbian
 
 Expected benefit:
 
-- Cleaner UI code.
-- Easier localization.
-- Less hardcoded text in composables.
+* Cleaner UI code.
+* Easier localization.
+* Less hardcoded text in composables.
 
 ## Later
 
-### 5. BudgetPeriod domain model
+### 3. BudgetPeriod domain model
 
 Introduce a real budget period entity instead of treating settings as the whole budget lifecycle.
 
@@ -290,11 +282,11 @@ val periodId: String
 
 Expected benefit:
 
-- Multiple budget periods.
-- Better historical tracking.
-- Foundation for period-to-period carry-over logic.
+* Multiple budget periods.
+* Better historical tracking.
+* Foundation for period-to-period carry-over logic.
 
-### 6. Carry expenses to future periods
+### 4. Carry expenses to future periods
 
 Some expenses should be marked as reusable in future periods.
 
@@ -304,29 +296,24 @@ Possible field:
 val carryToFuturePeriods: Boolean = false
 ```
 
-Expected benefit:
-
-- Obligations like rent, internet, phone, subscriptions can be copied into future periods.
-- This should come after BudgetPeriod exists.
-
-### 7. Recurring obligations
+### 5. Recurring obligations
 
 Recurring obligations should be introduced only after BudgetPeriod and carry-over rules become clear.
 
 Examples:
 
-- Rent
-- Internet
-- Phone
-- Subscriptions
+* Rent
+* Internet
+* Phone
+* Subscriptions
 
 ## Future / Optional
 
-- Statistics screen
-- Better validation feedback
-- Package structure cleanup
-- Room, if JSON storage becomes painful
-- ViewModel, if BudgetApp becomes too large
+* Statistics screen
+* Better validation feedback
+* Package structure cleanup
+* Room, if JSON storage becomes painful
+* ViewModel, if BudgetApp becomes too large
 
 ---
 
@@ -334,25 +321,21 @@ Examples:
 
 ## High Priority
 
-- Reuse ExpenseFormScreen for editing
-- Remove AddExpenseDialog
-- Move remaining user-facing strings to strings.xml
+* Move remaining user-facing strings to strings.xml
 
 ## Medium Priority
 
-- Package structure
-- DatePicker
-- Amount calculator for composite expenses
-- Better validation feedback
+* Amount calculator for composite expenses
+* Better validation feedback
 
 ## Future
 
-- Budget periods
-- Carry-over expenses
-- Recurring obligations
-- Statistics
-- Room (if needed)
-- ViewModel (if needed)
+* Budget periods
+* Carry-over expenses
+* Recurring obligations
+* Statistics
+* Room (if needed)
+* ViewModel (if needed)
 
 ---
 
