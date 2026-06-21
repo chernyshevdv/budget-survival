@@ -18,10 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
 
@@ -33,6 +35,7 @@ fun BudgetSettingsScreen(
     onSave: (BudgetSettings) -> Unit
 ) {
     var textInitialBudget by remember { mutableStateOf(settings.initialBudget.toString()) }
+    var initialBudget by remember { mutableIntStateOf(settings.initialBudget) }
     var endDate by remember { mutableStateOf( settings.endDate ) }
 
     Scaffold(
@@ -56,11 +59,11 @@ fun BudgetSettingsScreen(
                 .padding(20.dp)
                 .fillMaxSize()
         ){
-            OutlinedTextField(
-                value = textInitialBudget,
-                onValueChange = { textInitialBudget = it },
-                label = { Text("Бюджет") },
-                singleLine = true
+            MoneyField(
+                value = initialBudget,
+                label = "Бюджет",
+                onValueChange = { initialBudget = it ?: 0 },
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(12.dp))
             DatePickerField(
@@ -72,7 +75,7 @@ fun BudgetSettingsScreen(
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = {
-                    buildSettings(textInitialBudget, endDate)
+                    buildSettings(initialBudget, endDate)
                         ?.let(onSave)
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -83,9 +86,7 @@ fun BudgetSettingsScreen(
     }
 }
 
-fun buildSettings(initialBudgetTxt: String, endDate: LocalDate): BudgetSettings? {
-    val initialBudget = initialBudgetTxt.toIntOrNull()
-
+fun buildSettings(initialBudget: Int?, endDate: LocalDate): BudgetSettings? {
     if (initialBudget != null && initialBudget >0)
         return BudgetSettings(initialBudget, endDate)
 

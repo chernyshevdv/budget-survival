@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Schedule
@@ -189,4 +190,52 @@ fun DatePickerField(
             DatePicker(state = datePickerState)
         }
     }
+}
+
+@Composable
+fun MoneyField(
+    value: Int?,
+    onValueChange: (Int?) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier
+){
+    var valueText by remember { mutableStateOf( value?.toString() ?: "") }
+    val valueInt = calculate(valueText)
+    val hasError = valueText.isNotBlank() && valueInt == null
+
+    OutlinedTextField(
+        value = valueText,
+        onValueChange = {
+            valueText = it
+            onValueChange(calculate(it))
+        },
+        label = { Text("$label (попробуй '5+5')") },
+        modifier = modifier,
+        singleLine = true,
+        isError = hasError,
+        supportingText = {
+            when {
+                hasError -> {
+                    Text("Не рассчитывается")
+                }
+                valueInt != null -> {
+                    Text(valueInt.rsd())
+                }
+            }
+        }
+    )
+}
+
+private fun calculate(formula: String): Int? {
+    val parts = formula.split("+")
+        .map { it.trim() }
+
+    var sum = 0
+    for (part in parts) {
+        val partInt = part.toIntOrNull()
+            ?: return null
+        sum += partInt
+    }
+
+    return sum
 }
