@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,6 +39,7 @@ fun ExpenseFormScreen(
 ) {
     var title by remember { mutableStateOf(expense?.title ?: "") }
     var amountText by remember { mutableStateOf(expense?.amount?.toString() ?: "") }
+    var amount by remember { mutableStateOf<Int?>(expense?.amount ) }
     var date by remember { mutableStateOf(expense?.date ?: LocalDate.now())}
     var isPlanned by remember { mutableStateOf(expense?.status == ExpenseStatus.PLANNED) }
     var isCash by remember { mutableStateOf(expense?.medium == ExpenseMedium.CASH) }
@@ -79,11 +81,17 @@ fun ExpenseFormScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(12.dp))
-            OutlinedTextField(
-                value = amountText,
-                onValueChange = { amountText = it },
-                label = { Text("Сколько?") },
-                singleLine = true
+//            OutlinedTextField(
+//                value = amountText,
+//                onValueChange = { amountText = it },
+//                label = { Text("Сколько?") },
+//                singleLine = true
+//            )
+            MoneyField(
+                value = amount,
+                onValueChange = { amount = it },
+                label = "Сколько?",
+                modifier = Modifier.fillMaxWidth()
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
@@ -120,7 +128,7 @@ fun ExpenseFormScreen(
                     buildExpense(
                         existingExpense = expense,
                         title=title,
-                        amountText=amountText,
+                        amount=amount,
                         date= date,
                         isPlanned=isPlanned,
                         isCash = isCash,
@@ -138,14 +146,13 @@ fun ExpenseFormScreen(
 private fun buildExpense(
     existingExpense: Expense?,
     title: String,
-    amountText: String,
+    amount: Int?,
     date: LocalDate,
     isPlanned: Boolean,
     isCash: Boolean,
     isObligation: Boolean
 ): Expense? {
     // Builds expense with the same id, if it exists
-    val amount = amountText.toIntOrNull()
     if (
         title.isBlank() ||
         amount == null ||
