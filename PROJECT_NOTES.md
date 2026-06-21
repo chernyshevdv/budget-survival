@@ -210,95 +210,63 @@ fun Long.toLocalDate(): LocalDate
 
 ---
 
-# Roadmap / Backlog
+### 4. Language and currency settings
 
-## Next
+Extend BudgetSettings.
 
-* [ ] 1. Amount calculator for composite expenses
-* [ ] 2. i18n / string resources cleanup
+Possible additions:
 
-### 1. Amount calculator for composite expenses
+    val language: AppLanguage
+    val currency: String
 
-When entering an expense amount, the amount field could open or embed a small calculator component.
+Currency is intentionally simple for now: `RSD`, `$`, `€`, etc.
 
-Use case:
-
-* The user bought several things during the day in the same category.
-* Example: two pharmacy visits in one day.
-* Instead of entering two separate expenses, the user wants to enter one expense and calculate the total in-place.
-
-Possible UX options:
-
-* Calculator icon near the amount field.
-* Bottom sheet calculator.
-* Inline expression input, for example `320 + 450 + 120`.
-* Result is written back into the amount field.
-
-Expected benefit:
-
-* Faster entry of composite expenses.
-* Less context switching to an external calculator app.
-* Good practice with reusable UI components and temporary form state.
-
-### 2. i18n / string resources cleanup
-
-Move remaining user-facing strings to Android string resources.
-
-Target languages:
-
-* English
-* Russian
-* Serbian
-
-Expected benefit:
-
-* Cleaner UI code.
-* Easier localization.
-* Less hardcoded text in composables.
+No exchange rates, currency conversion, or advanced formatting are planned.
 
 ## Later
 
-### 3. BudgetPeriod domain model
+### 5. Repository abstraction
 
-Introduce a real budget period entity instead of treating settings as the whole budget lifecycle.
+Introduce repository interfaces while keeping JSON storage.
 
-Possible model:
+Possible interfaces:
 
-```kotlin
-data class BudgetPeriod(
-    val id: String,
-    val title: String,
-    val initialBudget: Int,
-    val startDate: LocalDate,
-    val endDate: LocalDate
-)
-```
+    interface ExpenseRepository
+    interface SettingsRepository
 
-Expense may later reference a period:
+### 6. BudgetPeriod domain model
 
-```kotlin
-val periodId: String
-```
+Introduce a real budget period entity.
 
 Expected benefit:
 
 * Multiple budget periods.
-* Better historical tracking.
-* Foundation for period-to-period carry-over logic.
+* Historical tracking.
+* Foundation for carry-over logic.
 
-### 4. Carry expenses to future periods
+### 7. Room migration
 
-Some expenses should be marked as reusable in future periods.
+Room should be introduced before multiple related entities become part of the domain model.
 
-Possible field:
+Likely triggers:
 
-```kotlin
-val carryToFuturePeriods: Boolean = false
-```
+* BudgetPeriod
+* Carry-over expenses
+* Recurring obligations
 
-### 5. Recurring obligations
+### 8. Carry expenses to future periods
 
-Recurring obligations should be introduced only after BudgetPeriod and carry-over rules become clear.
+Blocked by:
+
+* BudgetPeriod
+* Room migration
+
+### 9. Recurring obligations
+
+Blocked by:
+
+* BudgetPeriod
+* Room migration
 
 Examples:
 
