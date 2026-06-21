@@ -38,9 +38,7 @@ fun ExpenseFormScreen(
 ) {
     var title by remember { mutableStateOf(expense?.title ?: "") }
     var amountText by remember { mutableStateOf(expense?.amount?.toString() ?: "") }
-    var dateText by remember { mutableStateOf(
-        expense?.date?.toString() ?: LocalDate.now().toString()
-    ) }
+    var date by remember { mutableStateOf(expense?.date ?: LocalDate.now())}
     var isPlanned by remember { mutableStateOf(expense?.status == ExpenseStatus.PLANNED) }
     var isCash by remember { mutableStateOf(expense?.medium == ExpenseMedium.CASH) }
     var isObligation by remember { mutableStateOf(expense?.scale == BudgetBucket.OBLIGATION) }
@@ -74,11 +72,11 @@ fun ExpenseFormScreen(
                 singleLine = true
             )
             Spacer(modifier = Modifier.height(12.dp))
-            OutlinedTextField(
-                value = dateText,
-                onValueChange = { dateText = it },
-                label = { Text("Когда?") },
-                singleLine = true
+            DatePickerField(
+                value=date,
+                onValueChange={ date = it },
+                label = "Когда?",
+                modifier = Modifier.fillMaxWidth(),
             )
             Spacer(modifier = Modifier.height(12.dp))
             OutlinedTextField(
@@ -123,7 +121,7 @@ fun ExpenseFormScreen(
                         existingExpense = expense,
                         title=title,
                         amountText=amountText,
-                        dateText= dateText,
+                        date= date,
                         isPlanned=isPlanned,
                         isCash = isCash,
                         isObligation=isObligation
@@ -141,23 +139,17 @@ private fun buildExpense(
     existingExpense: Expense?,
     title: String,
     amountText: String,
-    dateText: String,
+    date: LocalDate,
     isPlanned: Boolean,
     isCash: Boolean,
     isObligation: Boolean
 ): Expense? {
     // Builds expense with the same id, if it exists
     val amount = amountText.toIntOrNull()
-    val date = try {
-        LocalDate.parse(dateText)
-    } catch(e: Exception){
-        null
-    }
     if (
         title.isBlank() ||
         amount == null ||
-        amount <= 0 ||
-        date == null
+        amount <= 0
     ) return null
 
     val status = if (isPlanned) ExpenseStatus.PLANNED

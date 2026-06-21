@@ -1,5 +1,8 @@
 package dev.chernyshev.budgetsurvival
 
+import android.app.DatePickerDialog
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,17 +15,30 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Card
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
@@ -125,4 +141,63 @@ fun ExpenseList(
         }
     }
 }
+
+@Composable
+fun DatePickerField(
+    value: LocalDate,
+    onValueChange: (LocalDate) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+) {
+    var isDialogOpen by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = value.toEpochMillis()
+    )
+
+    OutlinedTextField(
+        value = value.toString(),
+        onValueChange = {},
+        label = { Text(label) },
+        readOnly = true,
+        singleLine = true,
+        modifier = Modifier.clickable {isDialogOpen = true },
+        trailingIcon = {
+            IconButton(onClick = {isDialogOpen = true}) {
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = "Выбрать дату"
+                )
+            }
+        }
+    )
+
+    if (isDialogOpen){
+        DatePickerDialog(
+            onDismissRequest = { isDialogOpen = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.toLocalDate()?.let(onValueChange)
+                        isDialogOpen = false
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { isDialogOpen = false }) {
+                    Text("Отмена")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
+}
+
+private fun LocalDate.toEpochMillis(): Long =
+    atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+
+private fun Long.toLocalDate(): LocalDate =
+    Instant.ofEpochMilli(this).atZone(ZoneId.systemDefault()).toLocalDate()
 
