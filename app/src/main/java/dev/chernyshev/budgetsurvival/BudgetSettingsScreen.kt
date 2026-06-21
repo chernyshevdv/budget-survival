@@ -24,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
-import java.time.format.DateTimeParseException
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +33,7 @@ fun BudgetSettingsScreen(
     onSave: (BudgetSettings) -> Unit
 ) {
     var textInitialBudget by remember { mutableStateOf(settings.initialBudget.toString()) }
-    var textEndDate by remember { mutableStateOf(settings.endDate.toString()) }
+    var endDate by remember { mutableStateOf( settings.endDate ) }
 
     Scaffold(
         topBar = {
@@ -64,16 +63,16 @@ fun BudgetSettingsScreen(
                 singleLine = true
             )
             Spacer(modifier = Modifier.height(12.dp))
-            OutlinedTextField(
-                value = textEndDate,
-                onValueChange = { textEndDate = it },
-                label = { Text("Конец периода") },
-                singleLine = true
+            DatePickerField(
+                value = settings.endDate,
+                onValueChange = { endDate = it },
+                label = "Конец периода",
+                modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.weight(1f))
             Button(
                 onClick = {
-                    buildSettings(textInitialBudget, textEndDate)
+                    buildSettings(textInitialBudget, endDate)
                         ?.let(onSave)
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -84,15 +83,10 @@ fun BudgetSettingsScreen(
     }
 }
 
-fun buildSettings(initialBudgetTxt: String, endDateTxt: String): BudgetSettings? {
+fun buildSettings(initialBudgetTxt: String, endDate: LocalDate): BudgetSettings? {
     val initialBudget = initialBudgetTxt.toIntOrNull()
-    val endDate = try {
-        LocalDate.parse(endDateTxt)
-    } catch (e: DateTimeParseException){
-        null
-    }
 
-    if (initialBudget != null && initialBudget >0 && endDate != null)
+    if (initialBudget != null && initialBudget >0)
         return BudgetSettings(initialBudget, endDate)
 
     return null
